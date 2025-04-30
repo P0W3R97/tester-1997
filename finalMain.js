@@ -18,6 +18,8 @@
 // upon the vertex attributes found in each program
 //
 function createShapes() {
+  myCube = new Cube (20);
+  myCube.VAO = bindVAO (myCube);
 }
 
 
@@ -31,8 +33,14 @@ function setUpCamera(program) {
     gl.useProgram (program);
     
     // set up your projection
-    
+    let projMatrix = glMatrix.mat4.create();
+    glMatrix.mat4.ortho(projMatrix, -5, 5, -5, 5, 1.0, 300.0);
+    gl.uniformMatrix4fv (program.uProjT, false, projMatrix);
+
     // set up your view
+    let viewMatrix = glMatrix.mat4.create();
+    glMatrix.mat4.lookAt(viewMatrix, [0, 0, -5], [0, 0, 0], [0, 1, 0]);
+    gl.uniformMatrix4fv (program.uViewT, false, viewMatrix);
 
 }
 
