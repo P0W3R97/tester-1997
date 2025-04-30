@@ -6,6 +6,7 @@
   var myCube = null;
 
   // GLSL programs
+  let program;
   
   // VAOs for the objects
 
