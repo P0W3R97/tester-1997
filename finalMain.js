@@ -3,6 +3,7 @@
   // Global variables that are set and used
   // across the application
   let gl;
+  var myCube = null;
 
   // GLSL programs
   
