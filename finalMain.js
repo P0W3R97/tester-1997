@@ -90,7 +90,27 @@ function setUpTextures(){
   // to program.
   //
   function initPrograms() {
-      
+    const vertexShader = getShader('vertex-shader');
+    const fragmentShader = getShader('fragment-shader');
+
+    // Create a program
+    program = gl.createProgram();
+    // Attach the shaders to this program
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.error('Could not initialize shaders');
+    }
+
+    // Use this program instance
+    gl.useProgram(program);
+    // We attach the location of these shader values to the program instance
+    // for easy access later in the code
+    program.aVertexPosition = gl.getAttribLocation(program, 'aVertexPosition');
+    program.aBary = gl.getAttribLocation(program, 'bary');
+    program.uTheta = gl.getUniformLocation (program, 'theta');
   }
 
 
