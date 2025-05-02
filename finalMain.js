@@ -3,11 +3,10 @@
 // Global variables that are set and used
 // across the application
 let gl;
-let wireframeProgram;
-let cubeVAO;
-let mycube;
+var myCube = null;
 
 // GLSL programs
+let program;
 
 // VAOs for the objects
 
@@ -21,10 +20,9 @@ let mycube;
 // upon the vertex attributes found in each program
 //
 function createShapes() {
-  mycube = new Cube(1);  // 1 subdivision
-  cubeVAO = bindVAO(mycube, wireframeProgram);
+myCube = new Cube (20);
+myCube.VAO = bindVAO (myCube, program);
 }
-
 
 
 //
@@ -37,8 +35,14 @@ function setUpCamera(program) {
   gl.useProgram (program);
   
   // set up your projection
-  
+  let projMatrix = glMatrix.mat4.create();
+  glMatrix.mat4.ortho(projMatrix, -5, 5, -5, 5, 1.0, 300.0);
+  gl.uniformMatrix4fv (program.uProjT, false, projMatrix);
+
   // set up your view
+  let viewMatrix = glMatrix.mat4.create();
+  glMatrix.mat4.lookAt(viewMatrix, [0, 0, -5], [0, 0, 0], [0, 1, 0]);
+  gl.uniformMatrix4fv (program.uViewT, false, viewMatrix);
 
 }
 
@@ -70,16 +74,17 @@ function setUpTextures(){
 //
 //  This function draws all of the shapes required for your scene
 //
-function drawShapes() {
-  gl.useProgram(wireframeProgram);
-  gl.bindVertexArray(cubeVAO);
+  function drawShapes() {
+    let modelMatrix = glMatrix.mat4.create();
   
-  // Using LINES will render only edges
-  gl.drawElements(gl.LINES, mycube.indices.length, gl.UNSIGNED_SHORT, 0);
-
-  gl.bindVertexArray(null);
-}
-
+    // drawing the cube rotating around Y  180 degrees
+    glMatrix.mat4.rotateY (modelMatrix,  modelMatrix, radians(180.0))
+    
+    // send the model matrix to the shader and draw.
+    gl.uniformMatrix4fv (program.uModelT, false, modelMatrix);
+    gl.bindVertexArray(myCube.VAO);
+    gl.drawElements(gl.TRIANGLES, myCube.indices.length, gl.UNSIGNED_SHORT, 0);
+  }
 
 
 //
@@ -93,10 +98,31 @@ function drawShapes() {
 // to program.
 //
 function initPrograms() {
-  wireframeProgram = initProgram("wireframe-V", "wireframe-F");
-  wireframeProgram.aVertexPosition = gl.getAttribLocation(wireframeProgram, "aVertexPosition");
-}
+  const vertexShader = getShader('wireframe-V');
+  const fragmentShader = getShader('wireframe-F');
 
+  // Create a program
+  program = gl.createProgram();
+  // Attach the shaders to this program
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  gl.linkProgram(program);
+
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.error('Could not initialize shaders');
+  }
+
+  // Use this program instance
+  gl.useProgram(program);
+  // We attach the location of these shader values to the program instance
+  // for easy access later in the code
+  program.aVertexPosition = gl.getAttribLocation(program, 'aVertexPosition');
+  //program.aBary = gl.getAttribLocation(program, 'bary');
+  program.uTheta = gl.getUniformLocation (program, 'theta');
+  program.uProjT = gl.getUniformLocation(program, 'uProjT');
+  program.uViewT = gl.getUniformLocation(program, 'uViewT');
+  program.uModelT = gl.getUniformLocation(program, 'uModelT');
+}
 
 
 // creates a VAO and returns its ID
