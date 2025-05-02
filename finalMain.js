@@ -77,7 +77,7 @@ function setUpTextures(){
     function drawShapes() {
       let modelMatrix = glMatrix.mat4.create();
     
-      // drawing the teapot rotating around Y  180 degrees
+      // drawing the cube rotating around Y  180 degrees
       glMatrix.mat4.rotateY (modelMatrix,  modelMatrix, radians(180.0))
       
       // send the model matrix to the shader and draw.
@@ -121,6 +121,7 @@ function setUpTextures(){
     program.uTheta = gl.getUniformLocation (program, 'theta');
     program.uProjT = gl.getUniformLocation(program, 'uProjT');
     program.uViewT = gl.getUniformLocation(program, 'uViewT');
+    program.uModelT = gl.getUniformLocation(program, 'uModelT');
   }
 
 
