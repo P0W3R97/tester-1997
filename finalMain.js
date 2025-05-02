@@ -21,7 +21,7 @@
 //
 function createShapes() {
   myCube = new Cube (20);
-  myCube.VAO = bindVAO (myCube);
+  myCube.VAO = bindVAO (myCube, program);
 }
 
 
@@ -109,8 +109,10 @@ function setUpTextures(){
     // We attach the location of these shader values to the program instance
     // for easy access later in the code
     program.aVertexPosition = gl.getAttribLocation(program, 'aVertexPosition');
-    program.aBary = gl.getAttribLocation(program, 'bary');
+    //program.aBary = gl.getAttribLocation(program, 'bary');
     program.uTheta = gl.getUniformLocation (program, 'theta');
+    program.uProjT = gl.getUniformLocation(program, 'uProjT');
+    program.uViewT = gl.getUniformLocation(program, 'uViewT');
   }
 
 

@@ -19,6 +19,9 @@
         
         // for object rotation
         uniform vec3 theta;
+        uniform mat4 uProjT;
+        uniform mat4 uViewT;
+
           
           
         void main()
@@ -49,7 +52,7 @@
             theUV = aUV;
     
             // transform vertex to clip space
-            gl_Position = rz * ry * rx * vec4 (aVertexPosition, 1.0);
+            gl_Position = uProjT * uViewT * rz * ry * rx * vec4(aVertexPosition, 1.0);
         }
     
         </script>
