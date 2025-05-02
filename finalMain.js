@@ -90,8 +90,8 @@ function setUpTextures(){
   // to program.
   //
   function initPrograms() {
-    const vertexShader = getShader('vertex-shader');
-    const fragmentShader = getShader('fragment-shader');
+    const vertexShader = getShader('wireframe-V');
+    const fragmentShader = getShader('wireframe-F');
 
     // Create a program
     program = gl.createProgram();
