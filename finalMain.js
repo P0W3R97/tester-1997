@@ -75,7 +75,15 @@ function setUpTextures(){
 //  This function draws all of the shapes required for your scene
 //
     function drawShapes() {
-        
+      let modelMatrix = glMatrix.mat4.create();
+    
+      // drawing the teapot rotating around Y  180 degrees
+      glMatrix.mat4.rotateY (modelMatrix,  modelMatrix, radians(180.0))
+      
+      // send the model matrix to the shader and draw.
+      gl.uniformMatrix4fv (program.uModelT, false, modelMatrix);
+      gl.bindVertexArray(myCube.VAO);
+      gl.drawElements(gl.TRIANGLES, myCube.indices.length, gl.UNSIGNED_SHORT, 0);
     }
 
 
