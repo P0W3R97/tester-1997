@@ -151,14 +151,6 @@ function setUpTextures(){
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
       
-      // UV buffer
-      let uvBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(shape.uv), gl.STATIC_DRAW);
-      let aUV = gl.getAttribLocation(program, 'aUV');
-      gl.enableVertexAttribArray(aUV);
-      gl.vertexAttribPointer(aUV, 2, gl.FLOAT, false, 0, 0);
-
       return theVAO;
   }
 
