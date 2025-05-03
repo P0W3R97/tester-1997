@@ -126,11 +126,11 @@ function bindVAO (shape, program) {
     gl.vertexAttribPointer(program.aVertexPosition, 3, gl.FLOAT, false, 0, 0);
     
     // add code for any additional vertex attribute
-    let myBaryBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, myBaryBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(shape.bary), gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(program.aBary);
-    gl.vertexAttribPointer(program.aBary, 3, gl.FLOAT, false, 0, 0);
+    // let myBaryBuffer = gl.createBuffer();
+    // gl.bindBuffer(gl.ARRAY_BUFFER, myBaryBuffer);
+    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(shape.bary), gl.STATIC_DRAW);
+    // gl.enableVertexAttribArray(program.aBary);
+    // gl.vertexAttribPointer(program.aBary, 3, gl.FLOAT, false, 0, 0);
     
     // Setting up the IBO
     let myIndexBuffer = gl.createBuffer();
