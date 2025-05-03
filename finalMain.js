@@ -61,7 +61,7 @@ function setUpTextures(){
   // get some texture space from the gpu
   
   // load the actual image
-  var worldImage = document.getElementById ('')
+  var worldImage = document.getElementById ('world-texture')
   worldImage.crossOrigin = "";
       
   // bind the texture so we can perform operations on it
