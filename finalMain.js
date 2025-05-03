@@ -205,13 +205,8 @@ function initProgram(vertex_id, fragment_id) {
   gl.attachShader(program, fragmentShader);
   gl.linkProgram(program);
 
-  if (!vertexShader || !fragmentShader) {
-    console.error("Shader compilation failed");
-    return;
-  }
-
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    console.error('Could not initialize shaders');
+    console.error('Could not initialize shaders', gl.getProgramInfoLog(program));
     return null;
   }
     
