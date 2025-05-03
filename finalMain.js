@@ -11,6 +11,7 @@ let program;
 // VAOs for the objects
 
 // textures
+let currentTex;
 
 // rotation
 
@@ -59,16 +60,26 @@ function setUpTextures(){
   gl.pixelStorei (gl.UNPACK_FLIP_Y_WEBGL, true);
   
   // get some texture space from the gpu
+  currentTex = gl.createTexture();
   
   // load the actual image
   var worldImage = document.getElementById ('world-texture')
   worldImage.crossOrigin = "";
       
   // bind the texture so we can perform operations on it
-      
+  gl.bindTexture(gl.TEXTURE_2D, theTexture);
+
   // load the texture data
+  worldImage.onload = () => {
+    doLoad (currentTex, worldImage);
+  };  
       
   // set texturing parameters
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, theImage);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
 //
