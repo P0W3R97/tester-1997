@@ -99,6 +99,10 @@ function setUpTextures(){
 //
 function initPrograms() {
   program = initProgram('wireframe-V', 'wireframe-F');
+  if (!vertexShader || !fragmentShader) {
+    console.error("Shader compilation failed");
+    return;
+  }
 
   // Use this program instance
   gl.useProgram(program);
