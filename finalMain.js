@@ -99,10 +99,6 @@ function setUpTextures(){
 //
 function initPrograms() {
   program = initProgram('wireframe-V', 'wireframe-F');
-  if (!vertexShader || !fragmentShader) {
-    console.error("Shader compilation failed");
-    return;
-  }
 
   // Use this program instance
   gl.useProgram(program);
@@ -208,6 +204,11 @@ function initProgram(vertex_id, fragment_id) {
   gl.attachShader(program, vertexShader);
   gl.attachShader(program, fragmentShader);
   gl.linkProgram(program);
+
+  if (!vertexShader || !fragmentShader) {
+    console.error("Shader compilation failed");
+    return;
+  }
 
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     console.error('Could not initialize shaders');
