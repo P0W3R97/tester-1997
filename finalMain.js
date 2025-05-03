@@ -67,7 +67,7 @@ function setUpTextures(){
   worldImage.crossOrigin = "";
       
   // bind the texture so we can perform operations on it
-  gl.bindTexture(gl.TEXTURE_2D, theTexture);
+  gl.bindTexture(gl.TEXTURE_2D, currentTex);
 
   // load the texture data
   worldImage.onload = () => {
@@ -75,7 +75,7 @@ function setUpTextures(){
   };  
       
   // set texturing parameters
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, theImage);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, worldImage);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -87,11 +87,6 @@ function setUpTextures(){
 //
   function drawShapes() {
     let modelMatrix = glMatrix.mat4.create();
-  
-    // drawing the cube rotating around Y  180 degrees
-    glMatrix.mat4.rotateY (modelMatrix,  modelMatrix, radians(180.0))
-    
-    // send the model matrix to the shader and draw.
     gl.uniformMatrix4fv (program.uModelT, false, modelMatrix);
     gl.bindVertexArray(myCube.VAO);
     gl.drawElements(gl.TRIANGLES, myCube.indices.length, gl.UNSIGNED_SHORT, 0);
@@ -283,6 +278,8 @@ function init() {
   
   // create and bind your current object
   createShapes();
+
+  setUpCamera(program);
   
   // do a draw
   draw();
