@@ -98,27 +98,14 @@ function setUpTextures(){
 // to program.
 //
 function initPrograms() {
-  const vertexShader = getShader('wireframe-V');
-  const fragmentShader = getShader('wireframe-F');
-
-  // Create a program
-  program = gl.createProgram();
-  // Attach the shaders to this program
-  gl.attachShader(program, vertexShader);
-  gl.attachShader(program, fragmentShader);
-  gl.linkProgram(program);
-
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    console.error('Could not initialize shaders');
-  }
+  program = initProgram('wireframe-V', 'wireframe-F');
 
   // Use this program instance
   gl.useProgram(program);
   // We attach the location of these shader values to the program instance
   // for easy access later in the code
   program.aVertexPosition = gl.getAttribLocation(program, 'aVertexPosition');
-  //program.aBary = gl.getAttribLocation(program, 'bary');
-  program.uTheta = gl.getUniformLocation (program, 'theta');
+  program.aBary = gl.getAttribLocation(program, 'bary');
   program.uProjT = gl.getUniformLocation(program, 'uProjT');
   program.uViewT = gl.getUniformLocation(program, 'uViewT');
   program.uModelT = gl.getUniformLocation(program, 'uModelT');
@@ -139,7 +126,11 @@ function bindVAO (shape, program) {
     gl.vertexAttribPointer(program.aVertexPosition, 3, gl.FLOAT, false, 0, 0);
     
     // add code for any additional vertex attribute
-
+    let myBaryBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, myBaryBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(shape.bary), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(program.aBary);
+    gl.vertexAttribPointer(program.aBary, 3, gl.FLOAT, false, 0, 0);
     
     // Setting up the IBO
     let myIndexBuffer = gl.createBuffer();
