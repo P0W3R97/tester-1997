@@ -9,35 +9,35 @@
       precision mediump float;
       // Vertex shader for phong illumination model
       // Per vertex shading
-      
+
       // Vertex Attributes
       in vec3 aVertexPosition; // in model coords
       in vec3 aNormal;    // in model coords
-      
+
       // outputs
       out vec3 N;
       out vec3 L;
       out vec3 V;
-        
+
       // Transforms
       uniform mat4 modelT;
       uniform mat4 viewT;
       uniform mat4 projT;
-      
+
       // Light parameters
       uniform vec3 lightPosition;   // in world coords
-      
+
       void main()
       {
           // All calculations will be done in camera space
           mat4 modelView = viewT * modelT;
           mat4 normalmatrix = transpose(inverse (modelView));
-          
+
           vec3 vcam = (modelView * vec4(aVertexPosition, 1.0)).xyz;
           vec3 lcam = (viewT * vec4(lightPosition, 1.0)).xyz;
           vec3 ncam = (normalmatrix * vec4(aNormal, 1.0)).xyz;
           ncam = faceforward (ncam, vcam, ncam);
-          
+
           // vectors to pass on to Fragment Shader
           N = normalize (ncam);
           L = normalize (lcam - vcam);
@@ -121,7 +121,7 @@
   <h1>CSCI-610: Final Exam Image</h1>
   <table>
       <tr>
-          <td><canvas id="webgl-canvas" width="500" height="500">
+          <td><canvas id="webgl-canvas" width="500" height="500" style="border: 1px solid red;">
             Your browser does not support the HTML5 canvas element.
           </canvas></td>
           
