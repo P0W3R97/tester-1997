@@ -111,18 +111,9 @@ function setUpTextures(){
     var worldImage = document.getElementById ('world-texture')
     worldImage.crossOrigin = "";
         
-    // bind the texture so we can perform operations on it
-    gl.bindTexture (gl.TEXTURE_2D, primaryColorTexture);
-        
-    // load the texture data
-    gl.texImage2D (gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, worldImage);
-        
-    // set texturing parameters
-    gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.bindTexture (gl.TEXTURE_2D, null);
+    worldImage.onload = () => {
+      doLoad (worldTexture, worldImage);
+    };
 
 }
 
@@ -248,6 +239,17 @@ function setUpTextures(){
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
       
       return theVAO;
+  }
+
+  function doLoad(theTexture, theImage) {
+    gl.bindTexture(gl.TEXTURE_2D, theTexture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, theImage);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    
+    draw();
   }
 
 
