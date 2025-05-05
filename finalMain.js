@@ -112,7 +112,7 @@ function setUpTextures(){
     worldImage.crossOrigin = "";
         
     worldImage.onload = () => {
-      doLoad (worldTexture, worldImage);
+      doLoad (primaryColorTexture, worldImage);
     };
 
 }
