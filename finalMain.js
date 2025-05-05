@@ -22,6 +22,7 @@ var mySphere = null;
 var myCylinder = null;
 
 // textures
+let primaryColorTexture;
 
 
 // rotation
@@ -48,6 +49,8 @@ function createShapes() {
 
     myCylinder = new Cylinder(30,10);
     myCylinder.VAO = bindVAO(myCylinder,globalProgram);
+
+    setUpTextures();
 }
 
 
@@ -102,16 +105,25 @@ function setUpTextures(){
     gl.pixelStorei (gl.UNPACK_FLIP_Y_WEBGL, true);
     
     // get some texture space from the gpu
+    primaryColorTexture = gl.createTexture();
     
     // load the actual image
-    var worldImage = document.getElementById ('')
+    var worldImage = document.getElementById ('world-texture')
     worldImage.crossOrigin = "";
         
     // bind the texture so we can perform operations on it
+    gl.bindTexture (gl.TEXTURE_2D, primaryColorTexture);
         
     // load the texture data
+    gl.texImage2D (gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, worldImage);
         
     // set texturing parameters
+    gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.bindTexture (gl.TEXTURE_2D, null);
+
 }
 
 //
