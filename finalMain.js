@@ -25,10 +25,10 @@ var myCylinder = null;
 
 
 // rotation
-var anglesReset = [30.0, 30.0, 0.0];
+var anglesReset = [0.0, 0.0, 0.0];
 var cube_angles = [30.0, 30.0, 0.0];
 var sphere_angles = [180.0, 180.0, 0.0];
-var angles = sphere_angles;
+var angles = [0.0, 0.0, 0.0];
 var angleInc = 5.0;
  
 //
@@ -46,7 +46,7 @@ function createShapes() {
     mySphere = new Sphere(25,10);
     mySphere.VAO = bindVAO(mySphere,globalProgram);
 
-    myCylinder = new Cylinder(3,1);
+    myCylinder = new Cylinder(30,10);
     myCylinder.VAO = bindVAO(myCylinder,globalProgram);
 }
 
@@ -71,8 +71,8 @@ function setUpCamera(program) {
     // // defaut is at (0,0,-5) looking at the origin
     // let viewMatrix = glMatrix.mat4.create();
     // // glMatrix.mat4.lookAt(viewMatrix, [3, 0, 5], [0, -1, 0], [0, 1, 0]);
-    // // glMatrix.mat4.lookAt(viewMatrix, [-3, 2, -15], [0, -2, 1], [0, 1, 0]);
-    // glMatrix.mat4.lookAt(viewMatrix, [0, 0, 5],[0, 0, 0],[0, 1, 0]);
+    // glMatrix.mat4.lookAt(viewMatrix, [-3, 2, -15], [0, -2, 1], [0, 1, 0]);
+    // // glMatrix.mat4.lookAt(viewMatrix, [0, 0, 5],[0, 0, 0],[0, 1, 0]);
     // gl.uniformMatrix4fv (program.uViewT, false, viewMatrix);
 
     let projMatrix = glMatrix.mat4.create();
@@ -83,7 +83,8 @@ function setUpCamera(program) {
     // set up your view
     // defaut is at (0,0,-5) looking at the origin
     let viewMatrix = glMatrix.mat4.create();
-    glMatrix.mat4.lookAt(viewMatrix, [0, 0, -5], [0, 0, 0], [0, 1, 0]);
+    // glMatrix.mat4.lookAt(viewMatrix, [0, 0, -5], [0, 0, 0], [0, 1, 0]);
+    glMatrix.mat4.lookAt(viewMatrix, [0, 0, -8], [0, 1.5, 0], [0, 1, 0]);
     gl.uniformMatrix4fv (program.uViewT, false, viewMatrix);
 
 }
@@ -119,16 +120,40 @@ function setUpTextures(){
   function drawShapes() {
       gl.useProgram(globalProgram);
       setUpCamera(globalProgram);
+
+      gl.uniform3fv(globalProgram.ambientLight, [0.2, 0.2, 0.2]);
+      gl.uniform3fv(globalProgram.lightPosition, [0.0, 8.0, -8.0]);
+      gl.uniform3fv(globalProgram.lightColor, [1.0, 0.9, 0.8]);
+      gl.uniform3fv(globalProgram.baseColor, [0.6, 0.2, 0.1]);
+      gl.uniform3fv(globalProgram.specHighlightColor, [0.8, 0.4, 0.3]);
+      gl.uniform1f(globalProgram.ka,0.3);
+      gl.uniform1f(globalProgram.kd,0.7);
+      gl.uniform1f(globalProgram.ks, 0.15);
+      gl.uniform1f(globalProgram.ke, 10.0);
       
-      let cp1 = glMatrix.mat4.create();
-      // drawing the teapot rotating around Y  180 degrees
-      glMatrix.mat4.rotateY (cp1,  cp1, radians(180.0))
-      glMatrix.mat4.translate(cp1,cp1,[0,-3,0]);
-      glMatrix.mat4.scale(cp1,cp1,[2.5,0.5,2.5]);
+      let tower = glMatrix.mat4.create();
+      // glMatrix.mat4.translate(tower,tower,[-0.25,-1,0]);
+      glMatrix.mat4.scale(tower,tower,[2.5,5,2.5]);
+      glMatrix.mat4.rotateX(tower, tower, glMatrix.glMatrix.toRadian(angles[0]));
+      glMatrix.mat4.rotateY(tower, tower, glMatrix.glMatrix.toRadian(angles[1]));
+      glMatrix.mat4.rotateZ(tower, tower, glMatrix.glMatrix.toRadian(angles[2]));
       // send the model matrix to the shader and draw.
-      gl.uniformMatrix4fv (globalProgram.uModelT, false, cp1);
+      gl.uniformMatrix4fv (globalProgram.uModelT, false, tower);
+      gl.bindVertexArray(myCylinder.VAO);
+      gl.drawElements(gl.TRIANGLES, myCylinder.indices.length, gl.UNSIGNED_SHORT, 0);
+
+      // Cube parameters
+      let merlon1 = glMatrix.mat4.create();
+      glMatrix.mat4.translate(merlon1,merlon1, [3,3.5,0]);
+      glMatrix.mat4.scale(merlon1, merlon1, [0.3, 0.5, 0.3]);
+      glMatrix.mat4.rotateX(merlon1, merlon1, glMatrix.glMatrix.toRadian(angles[0]));
+      glMatrix.mat4.rotateY(merlon1, merlon1, glMatrix.glMatrix.toRadian(angles[1]));
+      glMatrix.mat4.rotateZ(merlon1, merlon1, glMatrix.glMatrix.toRadian(angles[2]));
+      gl.uniformMatrix4fv(globalProgram.uModelT, false, merlon1);
       gl.bindVertexArray(myCube.VAO);
       gl.drawElements(gl.TRIANGLES, myCube.indices.length, gl.UNSIGNED_SHORT, 0);
+
+
   }
 
 
@@ -150,11 +175,23 @@ function setUpTextures(){
     // We attach the location of these shader values to the program instance
     // for easy access later in the code
     globalProgram.aVertexPosition = gl.getAttribLocation(globalProgram, 'aVertexPosition');
+    globalProgram.aNormal = gl.getAttribLocation(globalProgram,'aNormal');
     globalProgram.aBary = gl.getAttribLocation(globalProgram, 'bary');
+
     globalProgram.uModelT = gl.getUniformLocation (globalProgram, 'modelT');
     globalProgram.uViewT = gl.getUniformLocation (globalProgram, 'viewT');
     globalProgram.uProjT = gl.getUniformLocation (globalProgram, 'projT');
 
+    globalProgram.ambientLight = gl.getUniformLocation (globalProgram, 'ambientLight');
+    globalProgram.lightPosition = gl.getUniformLocation (globalProgram, 'lightPosition');
+    globalProgram.lightColor = gl.getUniformLocation (globalProgram, 'lightColor');
+    globalProgram.baseColor = gl.getUniformLocation (globalProgram, 'baseColor');
+    globalProgram.specHighlightColor = gl.getUniformLocation (globalProgram, 'specHighlightColor');
+
+    globalProgram.ka = gl.getUniformLocation (globalProgram, 'ka');
+    globalProgram.kd = gl.getUniformLocation (globalProgram, 'kd');
+    globalProgram.ks = gl.getUniformLocation (globalProgram, 'ks');
+    globalProgram.ke = gl.getUniformLocation (globalProgram, 'ke');
 
   }
 
@@ -178,6 +215,15 @@ function setUpTextures(){
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(shape.bary), gl.STATIC_DRAW);
       gl.enableVertexAttribArray(program.aBary);
       gl.vertexAttribPointer(program.aBary, 3, gl.FLOAT, false, 0, 0);
+
+      let myNormalBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, myNormalBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(shape.normals), gl.STATIC_DRAW);
+      gl.enableVertexAttribArray(program.aNormal);
+      gl.vertexAttribPointer(program.aNormal, 3, gl.FLOAT, false, 0, 0);
+
+      // uniform values
+      gl.uniform3fv (program.uTheta, new Float32Array(angles));
       
       // Setting up the IBO
       let myIndexBuffer = gl.createBuffer();

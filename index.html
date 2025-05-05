@@ -6,19 +6,65 @@
 
     <script id="wireframe-V" type="x-shader/x-vertex">
         #version 300 es
-        in vec4 aVertexPosition;
-        in vec3 bary;
+        precision mediump float;
+    
+    // Vertex Attributes
+    in vec3 aVertexPosition; // in model coords
+    in vec3 aNormal;    // in model coords
+    in vec3 bary;
+    
+    // outputs
+    out vec3 theColor;
+    out vec3 vbc;
+      
+    // Transforms
+    uniform mat4 modelT;
+    uniform mat4 viewT;
+    uniform mat4 projT;
+
+    // Light parameters
+    uniform vec3 ambientLight;
+    uniform vec3 lightPosition;   // in world coords
+    uniform vec3 lightColor;
+
+    // object color parameters
+    uniform vec3 baseColor;
+    uniform vec3 specHighlightColor;
+
+    // Phong parameters
+    uniform float ka;
+    uniform float kd;
+    uniform float ks;
+    uniform float ke;
+      
+    void main()
+    {
+        // All calculations will be done in camera space
+        mat4 modelView = viewT * modelT;
+        mat4 normalmatrix = transpose(inverse (modelView));
         
-        uniform mat4 modelT;
-        uniform mat4 viewT;
-        uniform mat4 projT;
-
-        out vec3 vbc;
-
-        void main()
-        {
-            gl_Position = projT * viewT * modelT * aVertexPosition;
-            vbc = bary;
+        vec3 vcam = (modelView * vec4(aVertexPosition, 1.0)).xyz;
+        vec3 lcam = (viewT * vec4(lightPosition, 1.0)).xyz;
+        vec3 ncam = (normalmatrix * vec4(aNormal, 1.0)).xyz;
+        ncam = faceforward (ncam, vcam, ncam);
+        
+        
+        vec3 N = normalize (ncam);
+        vec3 L = normalize (lcam - vcam);
+        vec3 R = normalize (reflect (-L, N));
+        vec3 V = -normalize (vcam);
+        
+        // individual components
+        vec3 ambient = ka * ambientLight * baseColor;
+        vec3 diffuse = kd * lightColor * baseColor * max (dot(L, N), 0.0);
+        vec3 spec = ks * specHighlightColor * lightColor * pow (max(dot(R, V), 0.0), ke);
+        
+        // final color
+        theColor = ambient + diffuse + spec;
+    
+        // transform vertex to clip space
+        gl_Position = projT * viewT * modelT * vec4 (aVertexPosition, 1.0);
+        vbc = bary;
         }
     </script>
 
@@ -26,22 +72,16 @@
      <script id="wireframe-F" type="x-shader/x-fragment">
          #version 300 es
          precision mediump float;
-         in vec3 vbc;
-         in vec3 theColor;
-         in vec2 theUV;
+              
+    in vec3 theColor;
+    in vec3 vbc;
 
-         uniform sampler2D theTexture;
-         // Color that is the result of this shader
-         out vec4 fragColor;
+    // Color that is the result of this shader
+    out vec4 fragColor;
 
-         void main(void) {
-          fragColor = vec4(0.5, 0.5, 0.5, 1.0);
-          if(vbc.x < 0.02 || vbc.y < 0.02 || vbc.z < 0.02) {
-              fragColor = vec4(1.0, 1.0, 1.0, 1.0);
-          }
-             
-         }
-
+    void main(void) {
+        fragColor = vec4 (theColor.xyz, 1.0);
+    }
      </script>
      
      <!-- Matrix library and code for standard transformations -->
@@ -79,10 +119,22 @@
               
               <table border="1">
               <tbody>
-              <tr>
+              <!-- <tr>
               <td> </td>
               <td>List any keyboard controls here</td>
-              </tr>
+              </tr> -->
+              <tr>
+                <td>x, y, z</td>
+                <td>Rotate the current shape forward about the x, y, or z axis</td>
+                </tr>
+                <tr>
+                <td>X, Y, Z</td>
+                <td>Rotate the current shape backward about the x, y, or z axis</td>
+                </tr>
+                <tr>
+                <td>r, R</td>
+                <td>Reset the figure to its original orientation</td>
+                </tr>
               </tbody>
               </table>
               
